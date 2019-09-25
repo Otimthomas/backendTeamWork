@@ -1,0 +1,29 @@
+{
+  "name": "backend_teamwork",
+  "version": "1.0.0",
+  "description": "TeamWork End Points.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Otimthomas/backendTeamWork.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Otimthomas/backendTeamWork/issues"
+  },
+  "homepage": "https://github.com/Otimthomas/backendTeamWork#readme",
+  "dependencies": {
+    "config": "^3.2.2",
+    "express": "^4.17.1",
+    "joi": "^14.3.1",
+    "mongoose": "^5.7.1"
+  },
+  "devDependencies": {
+    "jasmine": "^3.4.0"
+  }
+}
