@@ -9,13 +9,17 @@ router.get('/', (req, res) => {
 
 router.get('/:id', (req, res) => {
     const user = users.find(c => c.id === parseInt(req.params.id));
+    if(!user) return res.status(404).send('A user with that id was not found');
     res.send(user);
 });
 
 router.post('/', (req, res) => {
     const user = {
         id: users.length + 1,
-        name: req.body.name
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password
     };
 
     users.push(user);
@@ -24,14 +28,19 @@ router.post('/', (req, res) => {
 
 router.put('/:id', (req, res) => {
     const user = users.find(c => c.id === parseInt(req.params.id));
-    user.name = req.body.name;
+    if(!user) return res.status(404).send('A user with id not found');
+
+    user.firstName = req.body.firstName;
+    user.lastName = req.body.lastName;
+    user.email = req.body.email;
+    user.password = req.body.password;
 
     res.send(user);
 });
 
 router.delete('/:id', (req, res) => {
     const user = users.find(c => c.id === parseInt(req.params.id));
-    if(!user) return res.status(404).send('A user with id not found')
+    if(!user) return res.status(404).send('A user with id not found');
     const index = users.indexOf(user);
 
     users.splice(index, 1);
