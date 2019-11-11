@@ -1,31 +1,28 @@
+const bcrypt = require('bcrypt');
+const _ = require('lodash');
+
 const {
     Users,
+    generateAuthToken,
     validate
 } = require('../models/users');
 const express = require('express');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-    res.send(Users);
-});
-
-router.get('/:id', (req, res) => {
-    const user = Users.find(c => c.id === parseInt(req.params.id));
-    if (!user) return res.status(404).send('A user with that id was not found');
-    res.send(user);
-});
-
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const {
         error
     } = validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
+    let user = Users.find(user => user.email === req.body.email);
+    if (user) return res.status(400).send('User already registered');
+
     const b = Users.find(user => user.id === Users.length + 1);
     //console.log(b && b.id);
 
-    const user = {
+    user = {
         id: !b ? Users.length + 1 : Users.length + 2,
         firstName: req.body.firstName,
         lastName: req.body.lastName,
@@ -33,34 +30,15 @@ router.post('/', (req, res) => {
         password: req.body.password
     };
 
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+
+    const token = generateAuthToken(user);
+
     Users.push(user);
-    res.send(user);
+    res.header('x-auth-token', token)
+        .header('access-control-expose-headers', 'x-auth-token')
+        .send(_.pick(user, ['id', 'firstName', 'lastName', 'email']))
 });
-
-router.put('/:id', (req, res) => {
-    const {
-        error
-    } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
-    const user = Users.find(c => c.id === parseInt(req.params.id));
-    if (!user) return res.status(404).send('A user with id not found');
-
-    user.firstName = req.body.firstName;
-    user.lastName = req.body.lastName;
-    user.email = req.body.email;
-    user.password = req.body.password;
-
-    res.send(user);
-});
-
-router.delete('/:id', (req, res) => {
-    const user = Users.find(c => c.id === parseInt(req.params.id));
-    if (!user) return res.status(404).send('A user with id not found');
-    const index = Users.indexOf(user);
-
-    Users.splice(index, 1);
-    res.send(Users);
-})
 
 module.exports = router;
