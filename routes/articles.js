@@ -3,6 +3,9 @@ const {
     Articles,
     validate
 } = require('../models/articles');
+const {
+    Comments
+} = require('../models/comments');
 const router = express.Router();
 
 router.get('/', (req, res) => {
